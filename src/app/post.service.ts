@@ -22,7 +22,7 @@ export class PostService {
   }
 
   fetchPosts() {
-    this.http
+    return this.http
       .get<{ [key: string]: Post }>(
         'https://angular-http-c4e3a.firebaseio.com/posts.json',
       )
@@ -34,7 +34,6 @@ export class PostService {
           }
         }
         return postsArray;
-      }))
-      .subscribe(posts => {});
+      }));
   }
 }
