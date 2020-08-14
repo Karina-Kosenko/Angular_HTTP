@@ -36,4 +36,11 @@ export class PostService {
         return postsArray;
       }));
   }
+
+  clearPosts() {
+    return this.http
+      .delete(
+        'https://angular-http-c4e3a.firebaseio.com/posts.json',
+      );
+  }
 }
