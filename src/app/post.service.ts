@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Post} from './post.model';
-import {map} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
+import {Subject, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,8 @@ import {Subject} from 'rxjs';
 export class PostService {
   error = new Subject<string>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   storePost(title: string, content: string) {
     const postData: Post = {title, content};
@@ -31,15 +32,21 @@ export class PostService {
       .get<{ [key: string]: Post }>(
         'https://angular-http-c4e3a.firebaseio.com/posts.json',
       )
-      .pipe(map(responseData => {
-        const postsArray: Post[] = [];
-        for (const key in responseData) {
-          if (responseData.hasOwnProperty(key)) {
-            postsArray.push({...responseData[key], id: key});
+      .pipe(
+        map(responseData => {
+          const postsArray: Post[] = [];
+          for (const key in responseData) {
+            if (responseData.hasOwnProperty(key)) {
+              postsArray.push({...responseData[key], id: key});
+            }
           }
-        }
-        return postsArray;
-      }));
+          return postsArray;
+        }),
+        catchError(errorResult => {
+          // Sent to analytics server
+          return throwError(errorResult);
+        })
+      );
   }
 
   clearPosts() {
