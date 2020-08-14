@@ -67,7 +67,8 @@ export class PostService {
       .delete(
         'https://angular-http-c4e3a.firebaseio.com/posts.json',
         {
-          observe: 'events'
+          observe: 'events',
+          responseType: 'json' // 'json', 'text', 'blob'...
         }
       )
       .pipe(
